@@ -64,6 +64,7 @@ ITEM_COUNT = {
 height, width = 360, 640
 fourcc = cv2.VideoWriter_fourcc(*'mp4v')
 video_dir = 'evaluate_videos'
+os.makedirs(video_dir, exist_ok=True)
 # video_name = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 # video = cv2.VideoWriter(f'{video_dir}\eval_{video_name}.mp4', fourcc, 20.0, (width, height))
 
