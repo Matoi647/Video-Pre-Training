@@ -13,9 +13,6 @@ from minerl.herobraine.env_specs.human_survival_specs import HumanSurvival
 
 from agent import MineRLAgent, ENV_KWARGS
 
-MAX_STEPS = 1000
-NUM_EPISODES = 100
-
 LOG_NAMES = ['acacia_log', 'birch_log', 'dark_oak_log', 
              'jungle_log', 'oak_log', 'spruce_log', 
              'stripped_acacia_log', 'stripped_birch_log', 'stripped_dark_oak_log',
@@ -61,19 +58,19 @@ ITEM_COUNT = {
     'torch' : 0
 }
 
+
+MAX_STEPS = 1000
+NUM_EPISODES = 100
 height, width = 360, 640
 fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-video_dir = 'evaluate_videos'
-os.makedirs(video_dir, exist_ok=True)
-# video_name = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-# video = cv2.VideoWriter(f'{video_dir}\eval_{video_name}.mp4', fourcc, 20.0, (width, height))
 
-
-def run_episode(agent, env, episode_idx):
+def run_episode(agent, env, episode_idx, video_dir):
     print(f"Running: episode {episode_idx}/{NUM_EPISODES}.")
-    obs = env.reset()
+    os.makedirs(video_dir, exist_ok=True)
     video_name = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     video = cv2.VideoWriter(f'{video_dir}/eval_episode_{episode_idx}_{video_name}.mp4', fourcc, 20.0, (width, height))
+    
+    obs = env.reset()
     item_count = ITEM_COUNT.copy()
     with open(f"{video_dir}/eval_episode_{episode_idx}_{video_name}.txt", "w") as f:
         for i in range(MAX_STEPS):
@@ -106,7 +103,7 @@ def run_episode(agent, env, episode_idx):
         video.release()
 
 
-def main(model, weights):
+def main(model, weights, video_dir):
     env = HumanSurvival(**ENV_KWARGS).make()
     print("---Loading model---")
     agent_parameters = pickle.load(open(model, "rb"))
@@ -117,11 +114,9 @@ def main(model, weights):
     agent.load_weights(weights)
 
     print("---Launching MineRL enviroment (be patient)---")
-    # obs = env.reset()
-    global video_name
-    global video
+
     for i in range(NUM_EPISODES):
-        run_episode(agent, env, i)
+        run_episode(agent, env, i, video_dir)
 
 
 if __name__ == "__main__":
@@ -129,7 +124,8 @@ if __name__ == "__main__":
 
     parser.add_argument("--weights", type=str, required=True, help="Path to the '.weights' file to be loaded.")
     parser.add_argument("--model", type=str, required=True, help="Path to the '.model' file to be loaded.")
+    parser.add_argument("--video_dir", type=str, required=True, help="Path to the output videos.")
 
     args = parser.parse_args()
 
-    main(args.model, args.weights)
+    main(args.model, args.weights, args.video_dir)
