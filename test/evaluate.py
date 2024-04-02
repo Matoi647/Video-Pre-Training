@@ -59,13 +59,11 @@ ITEM_COUNT = {
 }
 
 
-MAX_STEPS = 1000
-NUM_EPISODES = 100
 height, width = 360, 640
 fourcc = cv2.VideoWriter_fourcc(*'mp4v')
 
-def run_episode(agent, env, episode_idx, video_dir):
-    print(f"Running: episode {episode_idx}/{NUM_EPISODES}.")
+def run_episode(agent, env, episode_idx, video_dir, max_steps, num_episodes):
+    print(f"Running: episode {episode_idx}/{num_episodes}.")
     os.makedirs(video_dir, exist_ok=True)
     video_name = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     video = cv2.VideoWriter(f'{video_dir}/eval_episode_{episode_idx}_{video_name}.mp4', fourcc, 20.0, (width, height))
@@ -73,7 +71,7 @@ def run_episode(agent, env, episode_idx, video_dir):
     obs = env.reset()
     item_count = ITEM_COUNT.copy()
     with open(f"{video_dir}/eval_episode_{episode_idx}_{video_name}.txt", "w") as f:
-        for i in range(MAX_STEPS):
+        for i in range(max_steps):
             minerl_action = agent.get_action(obs)
             obs, reward, done, info = env.step(minerl_action)
             inventory = obs['inventory']
@@ -103,7 +101,7 @@ def run_episode(agent, env, episode_idx, video_dir):
         video.release()
 
 
-def main(model, weights, video_dir):
+def main(model, weights, video_dir, max_steps, num_episodes):
     env = HumanSurvival(**ENV_KWARGS).make()
     print("---Loading model---")
     agent_parameters = pickle.load(open(model, "rb"))
@@ -115,8 +113,8 @@ def main(model, weights, video_dir):
 
     print("---Launching MineRL enviroment (be patient)---")
 
-    for i in range(NUM_EPISODES):
-        run_episode(agent, env, i, video_dir)
+    for i in range(num_episodes):
+        run_episode(agent, env, i, video_dir, max_steps, num_episodes)
 
 
 if __name__ == "__main__":
@@ -125,7 +123,9 @@ if __name__ == "__main__":
     parser.add_argument("--weights", type=str, required=True, help="Path to the '.weights' file to be loaded.")
     parser.add_argument("--model", type=str, required=True, help="Path to the '.model' file to be loaded.")
     parser.add_argument("--video_dir", type=str, required=True, help="Path to the output videos.")
+    parser.add_argument("--max_steps", type=int, required=True, help="Maximum agent-enviroment interaction steps.")
+    parser.add_argument("--num_episodes", type=int, required=True, help="Game episodes.")
 
     args = parser.parse_args()
 
-    main(args.model, args.weights, args.video_dir)
+    main(args.model, args.weights, args.video_dir, args.max_steps, args.num_episodes)
