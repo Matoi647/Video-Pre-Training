@@ -15,7 +15,7 @@ from agent import MineRLAgent, ENV_KWARGS
 height, width = 360, 640
 fourcc = cv2.VideoWriter_fourcc(*'mp4v')
 video = cv2.VideoWriter('video.mp4', fourcc, 20.0, (width, height))
-video.set(cv2.VIDEOWRITER_PROP_QUALITY, 90)
+# video.set(cv2.VIDEOWRITER_PROP_QUALITY, 90)
 
 def main(model, weights):
     env = HumanSurvival(**ENV_KWARGS).make()
@@ -32,8 +32,13 @@ def main(model, weights):
 
     # with open("obs.txt", "w") as f:
     # while True:
-    for _ in range(1200):
+    for i in range(12000):
         minerl_action = agent.get_action(obs)
+        if i % 20 == 0:
+            minerl_action['chat'] = f'/me is exploring the world. {i//20}'
+        if i % 1200 == 0:
+            minerl_action['chat'] = '/effect give @p minecraft:night_vision 3600 1 false'
+            
         obs, reward, done, info = env.step(minerl_action)
         # pprint(obs, stream=f)
         env.render()

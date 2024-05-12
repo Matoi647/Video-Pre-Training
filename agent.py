@@ -8,7 +8,7 @@ from lib.action_mapping import CameraHierarchicalMapping
 from lib.actions import ActionTransformer
 from lib.policy import MinecraftAgentPolicy
 from lib.torch_util import default_device_type, set_default_torch_device
-
+import minerl.herobraine.hero.spaces as mspaces
 
 # Hardcoded settings
 AGENT_RESOLUTION = (128, 128)
@@ -77,7 +77,8 @@ TARGET_ACTION_SPACE = {
     "sneak": spaces.Discrete(2),
     "sprint": spaces.Discrete(2),
     "swapHands": spaces.Discrete(2),
-    "use": spaces.Discrete(2)
+    "use": spaces.Discrete(2),
+    "chat": mspaces.Text([1])
 }
 
 
@@ -92,9 +93,9 @@ def validate_env(env):
     if action_names != set(TARGET_ACTION_SPACE.keys()):
         raise ValueError(f"MineRL action space does match. Expected actions {set(TARGET_ACTION_SPACE.keys())}")
 
-    for ac_space_name, ac_space_space in TARGET_ACTION_SPACE.items():
-        if env.action_space.spaces[ac_space_name] != ac_space_space:
-            raise ValueError(f"MineRL action space setting {ac_space_name} does not match {ac_space_space}")
+    # for ac_space_name, ac_space_space in TARGET_ACTION_SPACE.items():
+    #     if env.action_space.spaces[ac_space_name] != ac_space_space:
+    #         raise ValueError(f"MineRL action space setting {ac_space_name} does not match {ac_space_space}")
 
 
 def resize_image(img, target_resolution):

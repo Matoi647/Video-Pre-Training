@@ -4,3 +4,4 @@ weights/*
 **/logs/*
 *.mp4
 test/evaluate_videos/*
+.vscode/*
