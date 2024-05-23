@@ -18,6 +18,11 @@ for i in range(600):
     ac = env.action_space.noop()
     # Spin around to see what is around us
     ac["camera"] = [0, 3]
+    if i % 20 == 0:
+        ac['chat'] = f'/me is exploring the world. {i//20}'
+    if i % 1200 == 0:
+        ac['chat'] = '/effect give @p minecraft:night_vision 3600 1 false'
+        
     obs, reward, done, info = env.step(ac)
     img = obs['pov']
     video.write(cv2.cvtColor(img, cv2.COLOR_RGB2BGR))

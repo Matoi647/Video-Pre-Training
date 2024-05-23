@@ -32,7 +32,7 @@ def main(model, weights):
 
     # with open("obs.txt", "w") as f:
     # while True:
-    for i in range(12000):
+    for i in range(1200):
         minerl_action = agent.get_action(obs)
         if i % 20 == 0:
             minerl_action['chat'] = f'/me is exploring the world. {i//20}'
@@ -41,7 +41,8 @@ def main(model, weights):
             
         obs, reward, done, info = env.step(minerl_action)
         # pprint(obs, stream=f)
-        env.render()
+        # env.render()
+        print(i)
         # break
         img = obs['pov']
         video.write(cv2.cvtColor(img, cv2.COLOR_RGB2BGR))
