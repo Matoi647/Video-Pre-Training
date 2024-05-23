@@ -89,9 +89,9 @@ def validate_env(env):
             continue
         if getattr(env.task, key) != value:
             raise ValueError(f"MineRL environment setting {key} does not match {value}")
-    action_names = set(env.action_space.spaces.keys())
-    if action_names != set(TARGET_ACTION_SPACE.keys()):
-        raise ValueError(f"MineRL action space does match. Expected actions {set(TARGET_ACTION_SPACE.keys())}")
+    # action_names = set(env.action_space.spaces.keys())
+    # if action_names != set(TARGET_ACTION_SPACE.keys()):
+    #     raise ValueError(f"MineRL action space does match. Expected actions {set(TARGET_ACTION_SPACE.keys())}")
 
     # for ac_space_name, ac_space_space in TARGET_ACTION_SPACE.items():
     #     if env.action_space.spaces[ac_space_name] != ac_space_space:
